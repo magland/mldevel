@@ -1,0 +1,25 @@
+{
+  "name": "mldevel",
+  "version": "1.0.0",
+  "description": "Development tool for MountainLab project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magland/mldevel.git"
+  },
+  "keywords": [
+    "mountainlab",
+    "kbucket",
+    "lari",
+    "mountainsort"
+  ],
+  "author": "Jeremy Magland",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/magland/mldevel/issues"
+  },
+  "homepage": "https://github.com/magland/mldevel#readme"
+}
