@@ -16,6 +16,14 @@ const commands = {
   'clone': {
     handler: handle_clone,
     helpstr: 'clone [project]'
+  },
+  'npm-run': {
+    handler: handle_npm_run,
+    helpstr: 'npm-run [project] [script]'
+  },
+  'test': {
+    handler: handle_test,
+    helpstr: 'test [project]'
   }
 };
 
@@ -98,7 +106,14 @@ function Project(config) {
   };
   this.directory = function() {
     return m_directory;
-  }
+  };
+  this.version=function() {
+    if (m_package_json) return m_package_json.version||'';
+    return '';
+  };
+  this.packageJson =function() {
+    return JSON.parse(JSON.stringify(m_package_json));
+  };
   let m_directory = DIR + '/' + config.name;
   let m_package_json = null;
   let m_setup_py_text = null;
@@ -120,18 +135,36 @@ function Project(config) {
 }
 
 function handle_info() {
-  for (let i in Projects) {
-    P = Projects[i];
+  console.info('----------------------------------------------------------');
+  async.eachSeries(Projects, function(P, cb) {
+    if ((arg2)&&(arg2!=P.name())) {
+      cb();
+      return;
+    }
     let str = '';
     let color = ccc.FgCyan;
-    if (!P.present()) {
+    if (P.present()) {
+      str+=`(${P.version()})`;
+    }
+    else {
       color = ccc.FgRed
       str += '[MISSING]'
     }
     console.info(color + P.name(), ' ', str, ccc.Reset);
+    if (!P.present()) {
+      cb();
+      return;
+    }
     console.info('  ', 'Languages: ' + P.languages().join(' '));
+    if (P.packageJson()) {
+      let X=P.packageJson();
+      let script_names=Object.keys(X.scripts||{});
+      console.info('  ','npm scripts: '+script_names.join(', '));
+    }
     console.info('');
-  }
+    cb();
+    
+  }, function() {});
 }
 
 function handle_status() {
@@ -165,10 +198,11 @@ function handle_status() {
         stdout='Up-to-date.';
       }
       console.info(stdout);
-      console.error(stderr);
+      if (stderr) console.error(stderr);
+      console.info('');
       cb();
     });
-    console.info('');
+    
   }, function() {});
 }
 
@@ -179,15 +213,29 @@ function handle_clone() {
     return;
   }
   let cmd = `git clone ${P.repo()} ${DIR}/${P.name()}`;
-  run_command(cmd);
+  run_command(cmd,{shell:true,stdio: 'inherit'});
 }
 
-function run_command(cmd) {
+function handle_npm_run() {
+  let P = Projects_by_name[arg2];
+  if (!P) {
+    console.error('Unrecognized project: ' + arg2);
+    return;
+  }
+  let str='run';
+  if (arg3=='install') str='';
+  let cmd = `npm ${str} ${arg3}`;
+  run_command(cmd,{cwd:P.directory(),shell:true,stdio: 'inherit'});
+}
+
+function handle_test() {
+  arg3='test';
+  handle_npm_run();
+}
+
+function run_command(cmd,opts) {
   console.info(`RUNNING: ${cmd}`);
-  require('child_process').spawn(cmd, {
-    stdio: 'inherit',
-    shell: true
-  });
+  require('child_process').spawn(cmd, opts);
 }
 
 function run_command_and_get_output(cmd, opts, callback) {
