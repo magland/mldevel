@@ -38,7 +38,7 @@
 		},
 		{
 			"name":"mountainlab-js-tests",
-			"repo":"https://github.com/magland/mountainlab-js-tests"
+			"repo":"https://github.com/flatironinstitute/mountainlab-js-tests"
 		},
 		{
 			"name":"mountainlab_pytools",
@@ -47,6 +47,10 @@
 		{
 			"name":"mountainsort_examples",
 			"repo":"https://github.com/flatironinstitute/mountainsort_examples"
-		}	                  
+		},
+		{
+			"name":"epoxy",
+			"repo":"https://github.com/magland/epoxy"
+		}	                    
 	]
 }
