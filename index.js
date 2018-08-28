@@ -3,7 +3,10 @@
 const fs = require('fs');
 const async = require('async');
 
-const DIR = __dirname + '/..';
+const DIR = __dirname + '/components';
+if (!fs.existsSync(DIR)) {
+  fs.mkdirSync(DIR);
+}
 const commands = {
   'info': {
     handler: handle_info,
@@ -16,6 +19,10 @@ const commands = {
   'clone': {
     handler: handle_clone,
     helpstr: 'clone [project]'
+  },
+  'pull': {
+    handler: handle_pull,
+    helpstr: 'pull [project]'
   },
   'npm-run': {
     handler: handle_npm_run,
@@ -107,11 +114,11 @@ function Project(config) {
   this.directory = function() {
     return m_directory;
   };
-  this.version=function() {
-    if (m_package_json) return m_package_json.version||'';
+  this.version = function() {
+    if (m_package_json) return m_package_json.version || '';
     return '';
   };
-  this.packageJson =function() {
+  this.packageJson = function() {
     return JSON.parse(JSON.stringify(m_package_json));
   };
   let m_directory = DIR + '/' + config.name;
@@ -137,16 +144,15 @@ function Project(config) {
 function handle_info() {
   console.info('----------------------------------------------------------');
   async.eachSeries(Projects, function(P, cb) {
-    if ((arg2)&&(arg2!=P.name())) {
+    if ((arg2) && (arg2 != P.name())) {
       cb();
       return;
     }
     let str = '';
     let color = ccc.FgCyan;
     if (P.present()) {
-      str+=`(${P.version()})`;
-    }
-    else {
+      str += `(${P.version()})`;
+    } else {
       color = ccc.FgRed
       str += '[MISSING]'
     }
@@ -157,20 +163,20 @@ function handle_info() {
     }
     console.info('  ', 'Languages: ' + P.languages().join(' '));
     if (P.packageJson()) {
-      let X=P.packageJson();
-      let script_names=Object.keys(X.scripts||{});
-      console.info('  ','npm scripts: '+script_names.join(', '));
+      let X = P.packageJson();
+      let script_names = Object.keys(X.scripts || {});
+      console.info('  ', 'npm scripts: ' + script_names.join(', '));
     }
     console.info('');
     cb();
-    
+
   }, function() {});
 }
 
 function handle_status() {
   console.info('----------------------------------------------------------');
   async.eachSeries(Projects, function(P, cb) {
-    if ((arg2)&&(arg2!=P.name())) {
+    if ((arg2) && (arg2 != P.name())) {
       cb();
       return;
     }
@@ -194,26 +200,71 @@ function handle_status() {
         cb();
         return;
       }
-      if (stdout.split(' ').join('').split('\n').join('')=="On branch master Your branch is up-to-date with 'origin/master'. nothing to commit, working directory clean".split(' ').join('')) {
-        stdout='Up-to-date.';
+      if (stdout.split(' ').join('').split('\n').join('') == "On branch master Your branch is up-to-date with 'origin/master'. nothing to commit, working directory clean".split(' ').join('')) {
+        stdout = 'Up-to-date.';
       }
       console.info(stdout);
       if (stderr) console.error(stderr);
       console.info('');
       cb();
     });
-    
+
   }, function() {});
 }
 
-function handle_clone() {
-  let P = Projects_by_name[arg2];
-  if (!P) {
-    console.error('Unrecognized project: ' + arg2);
-    return;
+async function handle_clone() {
+  if (arg2 == 'all') {
+    for (let pname in Projects_by_name) {
+      let P = Projects_by_name[pname];
+      if (!fs.existsSync(P.directory())) {
+        await do_clone_project(P);
+      }
+    }
+  } else {
+    let P = Projects_by_name[arg2];
+    if (!P) {
+      console.error('Unrecognized project: ' + arg2);
+      return;
+    }
+    await do_clone_project(P);
   }
+}
+
+async function do_clone_project(P) {
+  console.info('CLONING: ' + P.name());
   let cmd = `git clone ${P.repo()} ${DIR}/${P.name()}`;
-  run_command(cmd,{shell:true,stdio: 'inherit'});
+  await run_command(cmd, {
+    shell: true,
+    stdio: 'inherit'
+  });
+}
+
+async function handle_pull() {
+  if (arg2 == 'all') {
+    for (let pname in Projects_by_name) {
+      let P = Projects_by_name[pname];
+      if (fs.existsSync(P.directory())) {
+        await do_pull_project(P);
+      }
+    }
+  } else {
+    let P = Projects_by_name[arg2];
+    if (!P) {
+      console.error('Unrecognized project: ' + arg2);
+      return;
+    }
+    await do_pull_project(P);
+  }
+}
+
+async function do_pull_project(P) {
+  console.info('PULLING: ' + P.name());
+  let cmd = `git pull`;
+  await run_command(cmd, {
+    shell: true,
+    cwd: P.directory(),
+    stdio: 'inherit'
+  });
 }
 
 function handle_npm_run() {
@@ -222,20 +273,35 @@ function handle_npm_run() {
     console.error('Unrecognized project: ' + arg2);
     return;
   }
-  let str='run';
-  if (arg3=='install') str='';
+  let str = 'run';
+  if (arg3 == 'install') str = '';
   let cmd = `npm ${str} ${arg3}`;
-  run_command(cmd,{cwd:P.directory(),shell:true,stdio: 'inherit'});
+  run_command(cmd, {
+    cwd: P.directory(),
+    shell: true,
+    stdio: 'inherit'
+  });
 }
 
 function handle_test() {
-  arg3='test';
+  arg3 = 'test';
   handle_npm_run();
 }
 
-function run_command(cmd,opts) {
-  console.info(`RUNNING: ${cmd}`);
-  require('child_process').spawn(cmd, opts);
+async function run_command(cmd, opts) {
+  return new Promise(function(resolve, reject) {
+    console.info(`RUNNING: ${cmd}`);
+    let P = require('child_process').spawn(cmd, opts);
+    P.on('close', function(code) {
+      if (code != 0) {
+        console.info(cmd);
+        reject(new Error('Non-zero exit code: ' + code));
+        return;
+      }
+      resolve(null);
+    });
+  });
+
 }
 
 function run_command_and_get_output(cmd, opts, callback) {
@@ -249,7 +315,7 @@ function run_command_and_get_output(cmd, opts, callback) {
     stderr += data.toString();
   });
   P.on('close', function(code) {
-    if (code!=0) {
+    if (code != 0) {
       console.info(cmd);
       callback('Non-zero exit code: ' + code);
       return;
