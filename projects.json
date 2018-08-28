@@ -47,6 +47,14 @@
 		{
 			"name":"mountainsort_examples",
 			"repo":"https://github.com/flatironinstitute/mountainsort_examples"
-		}	                  
+		},
+		{
+			"name":"epoxy",
+			"repo":"https://github.com/magland/epoxy"
+		},
+		{
+			"name":"spikeforestwidgets",
+			"repo":"https://github.com/magland/spikeforestwidgets"
+		}	                           
 	]
 }
