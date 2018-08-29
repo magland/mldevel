@@ -51,6 +51,10 @@
 		{
 			"name":"epoxy",
 			"repo":"https://github.com/magland/epoxy"
-		}	                    
+		},
+		{
+			"name":"spikeforestwidgets",
+			"repo":"https://github.com/magland/spikeforestwidgets"
+		}	                           
 	]
 }
