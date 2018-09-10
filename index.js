@@ -191,7 +191,7 @@ function handle_status() {
       cb();
       return;
     }
-    run_command_and_get_output(`git status`, {
+    run_command_and_get_output(`git status -s`, {
       cwd: P.directory(),
       shell: true
     }, function(err, stdout, stderr) {
