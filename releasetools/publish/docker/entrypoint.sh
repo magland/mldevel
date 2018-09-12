@@ -2,10 +2,9 @@
 
 set -e
 
-REPOSITORY_URL=$1
-REPOSITORY_TAG=$2
-
-cp .npmrc ~/.npmrc
+COMMAND=$1
+REPOSITORY_URL=$2
+REPOSITORY_TAG=$3
 
 git clone $REPOSITORY_URL source
 cd source
@@ -19,7 +18,18 @@ if [ -f $PRERELEASE_SCRIPT ]; then
    $PRERELEASE_SCRIPT
 fi
 
-npm publish
+
+if [ "$COMMAND" == "npm" ]; then
+	npm publish
+elif [ "$COMMAND" == "conda" ]; then
+	export ANACONDA_API_TOKEN=`cat ~/.anaconda`
+	export CONDA_PREFIX=/opt/conda
+	devel/conda_build.sh
+	devel/conda_upload.sh
+else
+	echo "Invalid command: $COMMAND"
+	exit -1
+fi
 
 #devel/conda_build.sh
 #devel/conda_upload.sh
