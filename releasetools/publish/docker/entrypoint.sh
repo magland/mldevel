@@ -3,12 +3,8 @@
 set -e
 
 COMMAND=$1
-REPOSITORY_URL=$2
-REPOSITORY_TAG=$3
 
-git clone $REPOSITORY_URL source
-cd source
-git checkout refs/tags/$REPOSITORY_TAG
+cd /source
 npm install
 npm test
 
@@ -17,7 +13,6 @@ if [ -f $PRERELEASE_SCRIPT ]; then
    echo "Running $PRERELEASE_SCRIPT"
    $PRERELEASE_SCRIPT
 fi
-
 
 if [ "$COMMAND" == "npm" ]; then
 	npm publish

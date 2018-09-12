@@ -6,7 +6,7 @@ RUN conda install conda-build
 
 RUN conda install -c conda-forge jq
 
-ADD . /working
+ADD entrypoint.sh /working/entrypoint.sh
 WORKDIR /working
 
 ENTRYPOINT ["./entrypoint.sh"]

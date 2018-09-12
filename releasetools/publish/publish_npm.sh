@@ -2,8 +2,7 @@
 
 set -e
 
-REPOSITORY_URL=$1
-REPOSITORY_TAG=$2
+SOURCEDIR=$1
 
-sudo docker build -t mldevel_publish docker
-docker run -v ~/.npmrc:/root/.npmrc -it mldevel_publish npm $REPOSITORY_URL $REPOSITORY_TAG
+docker pull magland/mldevel_publish
+docker run -v ~/.npmrc:/root/.npmrc -v $SOURCEDIR:/source -it magland/mldevel_publish npm
