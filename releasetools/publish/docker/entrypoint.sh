@@ -17,10 +17,11 @@ fi
 if [ "$COMMAND" == "npm" ]; then
 	npm publish
 elif [ "$COMMAND" == "conda" ]; then
-	export ANACONDA_API_TOKEN=`cat ~/.anaconda`
 	export CONDA_PREFIX=/opt/conda
 	devel/conda_build.sh
 	devel/conda_upload.sh
+elif [ "$COMMAND" == "pypi" ]; then
+	devel/publish.sh
 else
 	echo "Invalid command: $COMMAND"
 	exit -1
