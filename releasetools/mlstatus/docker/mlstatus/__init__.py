@@ -168,7 +168,7 @@ def get_git_status(dirname):
         print(result.stderr)
     if not result.stdout.decode():
         return ''
-    return result.stdout.decode()
+    return result.stdout.decode().strip()
 
 def get_git_version(dirname):
     cmd='git describe --tags'
@@ -196,11 +196,11 @@ def get_local_info(projects,*,git_repo_dirname):
         if 'local' in P:
             project=find_local_project(P['local']['name'],git_repo_dirname=git_repo_dirname)
             if project:
-                P['local_version']=project['version']
-                P['local_status']=project['status']
+                P['git_version']=project['version']
+                P['git_status']=project['status']
                 P['local_modifications']=project['modifications']
             else:
-                P['local_version']='not found'
+                P['git_version']='not found'
     print('done.')
     
 def get_remote_info(projects):
@@ -229,7 +229,7 @@ def get_remote_info(projects):
 def get_data_frame(projects,*,local,remote,local_changes):
     columns=['name']
     if local:
-        columns.append('local_version')
+        columns.append('git_version')
         if local_changes:
             columns.append('local_modifications')
     if remote:

@@ -5,8 +5,12 @@ set -e
 COMMAND=$1
 
 cd /source
-npm install
-npm test
+if [ -f "package.json" ]; then
+	npm install
+	npm test
+elif [ -f "setup.py" ]; then
+	pip install .
+fi
 
 PRERELEASE_SCRIPT=devel/prerelease_test_within_container.sh
 if [ -f $PRERELEASE_SCRIPT ]; then
