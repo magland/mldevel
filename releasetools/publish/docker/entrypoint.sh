@@ -21,9 +21,9 @@ fi
 if [ "$COMMAND" == "npm" ]; then
 	npm publish
 elif [ "$COMMAND" == "conda" ]; then
-	export CONDA_PREFIX=/opt/conda
+	export CONDA_PREFIX=/opt/conda # Probably no longer needed
+	conda config --set anaconda_upload yes
 	devel/conda_build.sh
-	devel/conda_upload.sh
 elif [ "$COMMAND" == "pypi" ]; then
 	devel/publish.sh
 else

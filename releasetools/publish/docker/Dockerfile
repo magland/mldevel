@@ -7,6 +7,8 @@ RUN conda install conda-build
 RUN conda install -c conda-forge jq
 RUN conda install -c conda-forge twine 
 
+RUN apt-get update && apt-get install -y build-essential
+
 ADD entrypoint.sh /working/entrypoint.sh
 WORKDIR /working
 
