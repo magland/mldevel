@@ -114,12 +114,11 @@ def find_latest_conda_package(package_name,*,channel=None):
     if not result.stdout:
         print('Not found on conda: '+cmd)
         return None
-    print('=====================================================================')
-    print(result.stdout)
-    print('=====================================================================')
-    print('')
-    print('')
-    obj=json.loads(result.stdout.decode())
+    try:
+        obj=json.loads(result.stdout.decode())
+    except:
+        print('Error parsing output in find_latest_conda_package')
+        return None
     if package_name in obj:
         return obj[package_name][-1]
     else:
@@ -152,7 +151,11 @@ def find_latest_npm_package(package_name):
     if not result.stdout:
         print('Not found on npm: '+cmd)
         return None
-    obj=json.loads(result.stdout.decode())
+    try:
+        obj=json.loads(result.stdout.decode())
+    except:
+        print('Error parsing output in find_latest_npm_package')
+        return None
     return dict(
         version=obj['data']
     )
