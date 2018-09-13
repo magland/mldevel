@@ -6,6 +6,7 @@ If you modify the code in docker/, you will want to push the new version to dock
 
 ```
 sudo docker build -t magland/mldevel_publish docker
+docker push magland/mldevel_publish
 ```
 
 ### To publish a package on npm

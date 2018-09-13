@@ -170,28 +170,24 @@ def get_git_status(dirname):
         return ''
     return result.stdout.decode()
 
+def get_git_version(dirname):
+    cmd='git describe --tags'
+    result = subprocess.run(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dirname)
+    if result.stderr:
+        print(result.stderr)
+    if not result.stdout.decode():
+        return ''
+    return result.stdout.decode()
+
 def find_local_project(package_name,*,git_repo_dirname):
     basedir=git_repo_dirname
     dirname=basedir+'/'+package_name
-    package_json_fname=dirname+'/package.json'
-    setup_py_fname=dirname+'/setup.py'
     ret={}
     ret['status']=get_git_status(dirname)
     ret['modifications']='{}'.format(len(ret['status'].split('\n'))-1)
     if ret['modifications']=='0':
         ret['modifications']=''
-    if os.path.exists(package_json_fname):
-        with open(package_json_fname) as f:
-            obj=json.load(f)
-        ret['version']=obj['version']
-    elif os.path.exists(setup_py_fname):
-        obj=get_setup_py_data(dirname)
-        if obj:
-            ret['version']=obj['version']
-        else:
-            return 'problem'
-    else:
-        return None
+    ret['version']=get_git_version(dirname)
     return ret
 
 def get_local_info(projects,*,git_repo_dirname):
