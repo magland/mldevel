@@ -168,7 +168,7 @@ def get_git_status(dirname):
         print(result.stderr)
     if not result.stdout.decode():
         return ''
-    return result.stdout.decode().strip()
+    return result.stdout.decode()
 
 def get_git_version(dirname):
     cmd='git describe --tags'
@@ -177,7 +177,7 @@ def get_git_version(dirname):
         print(result.stderr)
     if not result.stdout.decode():
         return ''
-    return result.stdout.decode()
+    return result.stdout.decode().strip()
 
 def find_local_project(package_name,*,git_repo_dirname):
     basedir=git_repo_dirname
