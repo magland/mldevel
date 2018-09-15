@@ -11,7 +11,7 @@ def get_projects():
         dict(ptype='node',name='lariclient',github_user='magland'),
         dict(ptype='node',name='mlclient',github_user='magland'),
         dict(ptype='node',name='mountainlab',github_name='mountainlab-js',github_user='flatironinstitute',conda_channel='flatiron'),
-        dict(ptype='node',name='epoxy',github_name='epoxy',github_user='magland',npm_name='@magland/epoxy'),
+        dict(ptype='node',name='epoxy',github_name='epoxy',github_user='magland',npm_name='@magland/epoxy',conda_channel='flatiron'),
         dict(ptype='python',name='ml_ephys',github_user='magland',conda_channel='flatiron'),
         dict(ptype='python',name='ml_ms4alg',github_user='magland',conda_channel='flatiron'),
         dict(ptype='python',name='ml_spyking_circus',github_user='magland',conda_channel='flatiron'),
