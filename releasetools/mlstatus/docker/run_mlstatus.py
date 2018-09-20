@@ -24,4 +24,4 @@ while True:
         html+=DF.to_html(index=False)
         f.write(html)
     
-    time.sleep(60)
+    time.sleep(60*3)

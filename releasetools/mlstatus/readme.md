@@ -26,7 +26,7 @@ The following will build the container and start the service
 ./start.sh
 ```
 
-The service will generate a status.html file every minute or so, and it can be viewed at `https://kbucket.flatironinstitute.org/[kbucket-node-id]/download/status.html`, where you must replace `[kbucket-node-id]` with the appropriate kbucket node id. See the example at the top of this file.
+The service will generate a status.html file every few minutes, and it can be viewed at `https://kbucket.flatironinstitute.org/[kbucket-node-id]/download/status.html`, where you must replace `[kbucket-node-id]` with the appropriate kbucket node id. See the example at the top of this file.
 
 
 
