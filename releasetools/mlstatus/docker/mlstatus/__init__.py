@@ -15,6 +15,7 @@ def get_projects():
         dict(ptype='python',name='ml_ephys',github_user='magland',conda_channel='flatiron'),
         dict(ptype='python',name='ml_ms4alg',github_user='magland',conda_channel='flatiron'),
         dict(ptype='python',name='ml_spyking_circus',github_user='magland',conda_channel='flatiron'),
+        dict(ptype='python',name='ml_mearec',github_user='magland',conda_channel='flatiron'),
         dict(ptype='python',name='ml_spikeforest',github_user='magland',conda_channel='flatiron'),
         dict(ptype='python',name='ml_pyms',github_user=None,conda_channel='flatiron',pypi_name=None),
         dict(ptype='python',name='ml_ms3',github_user=None,conda_channel='flatiron',pypi_name=None),
